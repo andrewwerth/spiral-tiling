@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import argparse
 
-def spiral_tiling(tile, a=3, b=5, xrange=(-30,30), yrange=(-30,30), size=(3000,3000), scale=3):
+def spiral_tiling(tile, a=3, b=5, xrange=(-30,30), yrange=(-30,30), size=(3000,3000), scale=1):
     """ Create a spiral tiling from an initial tile image
 
     Args:
@@ -41,18 +41,15 @@ def spiral_tiling(tile, a=3, b=5, xrange=(-30,30), yrange=(-30,30), size=(3000,3
     zm = np.meshgrid(x, y)
     z = zm[0] + zm[1] * 1j
 
-    # Length of the vector pointing to a+bi 
-    c = np.absolute(a + b * 1j)
-
     # Take the inverse of the exponential function
     zinv = np.log(z)
 
     # Rotate to align vector a+bi so it lines up with imaginary axis
     # by multiplying by b+ai and scaling by the length
-    zinv = zinv * (b + a * 1j) / c
+    zinv = zinv * (b + a * 1j) 
 
     # Scale so that the imaginary axis lines up with tile size
-    zinv = zinv * (tile.shape[0] * c * scale / two_pi)
+    zinv = zinv * (tile.shape[0] * scale / two_pi)
 
     # Get the real and imaginary components & wrap into the tile 
     xi = np.uint32(np.real(zinv) % tile.shape[1])
