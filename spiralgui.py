@@ -103,37 +103,6 @@ with ui.row().classes('w-full'):
         ui.upload(on_upload=handle_upload_tile, auto_upload=True, label="Load Tile").props('flat accept="image/*"').classes('flex-1')
         ui.button("Save", on_click=save_image)
 
-#with ui.row().classes('items-center w-full gap-4 p-4'):
-
-
-
-# with ui.row().classes('w-full gap-4 p-4'):
-#     ui.button("Spiralize", on_click=lambda: generate_spiral())
-#     ui.label("Scale")
-#     scale_slider = ui.slider(min=1, max=10, value=3).props('label-always').classes('flex-1')
-#     ui.label("a")    
-#     a_slider = ui.slider(min=0, max=40, value=5).props('label-always').classes('flex-1')
-#     ui.label("b")
-#     b_slider = ui.slider(min=0, max=40, value=7).props('label-always').classes('flex-1')
-
-# with ui.row().classes('w-full gap-4 p-4'):
-#     ui.label("x-range")
-#     xrange_slider = ui.range(min=-100, max=100, value={"min": -30, "max": 30}).props('label-always').classes('flex-1')
-#     ui.label("y-range")
-#     yrange_slider = ui.range(min=-100, max=100, value={"min": -30, "max": 30}).props('label-always').classes('flex-1')
-#     ui.label("Function")
-#     function_select = ui.select(list(FUNCS.keys()), value="Log")
-
-
-# with ui.row().classes('w-full items-center'):
-#     initial_img = np.zeros((200,200,3), dtype=float)
-#     spiral_img = ui.image(numpy_to_base64(initial_img)).style('max-width: 600px; max-height: 600px;')
-#     ui.upload(on_upload=handle_upload_tile, auto_upload=True, label="Load Tile").props('flat accept="image/*"').classes('flex-1')
-
-# with ui.row().classes('w-full gap-4 p-4'):
-#     ui.button("Save", on_click=save_image)
-
-
 ui.run(
     title="Spiralized Tilings",
 )
