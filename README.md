@@ -2,13 +2,12 @@
 
 Create conformal map visualizations using logarithmic spiral transformations.
 
-This simple tool was inspired by a paper and talk by Craig S. Kaplan:
+This simple Python tool was inspired by a paper and talk by Craig S. Kaplan:
 
-    Escher-Like Spiral Tilings
-    https://isohedral.ca/escher-like-spiral-tilings/
+[Escher-Like Spiral Tilings](https://isohedral.ca/escher-like-spiral-tilings/)
 
 It contains a function you can import or run from the command line as well as a
-very rudimentary GUI (built with NiceGUI) that lets you invoke the spiralzing function,
+very rudimentary GUI (built with [NiceGUI](https://nicegui.io)) that lets you invoke the spiralzing function,
 load a new tile from disk, and save (download) generated images.
 
 ## Installation
@@ -27,7 +26,7 @@ python spiralgui.py
 ```
 
 ### Command Line
-```bash
+```
 usage: python spiralize.py [-h] [-o OUTFILE] [-a A] [-b B] [-s SIZE SIZE] [--scale SCALE] [-r RANGE] [-t TILE]
 
 Generate Escher-like spiral tiles
@@ -56,16 +55,8 @@ plt.imshow(img)
 plt.show()
 ```
 
-## Parameters
+## Example
 
-- `a`, `b`: Control the spiral shape
-- `scale`: Texture scale factor
+Here's a spiral created using the GUI tool with the sample 100x100 pixel tile, parameters set to scale=1, a=4, and b=6.
 
-## Examples
-
-![Example 1](examples/example1.png)
-
-## License
-
-MIT License
-```
+![Example](examples/spiral_scale1_a4_b6.png)

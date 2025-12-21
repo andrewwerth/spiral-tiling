@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import argparse
 
-def spiral_tiling(tile, a=3, b=5, xrange=(-30,30), yrange=(-30,30), size=(3000,3000), scale=1):
+def spiral_tiling(tile, a=3, b=5, xrange=(-30,30), yrange=(-30,30), size=(3000,3000), scale=1, func=np.log):
     """ Create a spiral tiling from an initial tile image
 
     Args:
@@ -41,8 +41,8 @@ def spiral_tiling(tile, a=3, b=5, xrange=(-30,30), yrange=(-30,30), size=(3000,3
     zm = np.meshgrid(x, y)
     z = zm[0] + zm[1] * 1j
 
-    # Take the inverse of the exponential function
-    zinv = np.log(z)
+    # Apply the function to the complex plane
+    zinv = func(z)
 
     # Rotate to align vector a+bi so it lines up with imaginary axis
     # by multiplying by b+ai and scaling by the length
@@ -54,6 +54,10 @@ def spiral_tiling(tile, a=3, b=5, xrange=(-30,30), yrange=(-30,30), size=(3000,3
     # Get the real and imaginary components & wrap into the tile 
     xi = np.uint32(np.real(zinv) % tile.shape[1])
     yi = np.uint32(np.imag(zinv) % tile.shape[0])
+
+    # Due to the way floats interact with modulo, need to clip
+    xi = np.clip(xi, 0, tile.shape[1]-1)
+    yi = np.clip(yi, 0, tile.shape[0]-1)
 
     # Build the final image by indexing into the tile
     img = tile[yi, xi]

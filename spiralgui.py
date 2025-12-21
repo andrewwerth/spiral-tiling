@@ -17,6 +17,14 @@ from io import BytesIO
 BASE64_PREFIX = 'data:image/png;base64,'
 IMAGE_SIZE = (2400,2400)
 
+FUNCS = {"Log": np.log,
+         "Sqrt": np.sqrt,
+         "Squared": np.square,
+         "Absolute": np.absolute,
+         "Inverse": lambda z:  1/ (z + (z == 0)),
+         "Mobius": lambda z: np.log((0.5 * z + 3) / (0.3 * z - 3)),
+         "Exponential": np.exp}
+
 # Convert to base64 PNG
 def numpy_to_base64(img_array):
     # Save to bytes buffer as PNG
@@ -48,8 +56,12 @@ def generate_spiral():
     a = a_slider.value
     b = b_slider.value
     scale = scale_slider.value
-    img = sp.spiral_tiling(tile, a, b, xrange=(-30,30), yrange=(-30,30), 
-                        size=IMAGE_SIZE, scale=scale)
+    xr = (xrange_slider.value["min"], xrange_slider.value["max"])
+    yr = (yrange_slider.value["min"], yrange_slider.value["max"])
+    func = FUNCS[function_select.value]
+
+    img = sp.spiral_tiling(tile, a, b, xrange=xr, yrange=yr, 
+                        size=IMAGE_SIZE, scale=scale, func=func)
     spiral_img.set_source(numpy_to_base64(img))
 
 # Handler for when user uploads a new tile image
@@ -62,26 +74,64 @@ async def handle_upload_tile(e: events.UploadEventArguments):
     generate_spiral()
 
 # Build up the user interface with UI elements
-    
-with ui.row().classes('w-full gap-4 p-4'):
-    ui.button("Spiralize", on_click=lambda: generate_spiral())
 
-    ui.label("Scale")
-    scale_slider = ui.slider(min=1, max=10, value=3).props('label-always').classes('flex-1')
-    ui.label("a")    
-    a_slider = ui.slider(min=0, max=40, value=5).props('label-always').classes('flex-1')
-    ui.label("b")
-    b_slider = ui.slider(min=0, max=40, value=7).props('label-always').classes('flex-1')
+with ui.row().classes('w-full'):
+    with ui.column().classes('items-center').style('width: 800px;'):
+        initial_img = np.zeros((600,600,3), dtype=float)
+        spiral_img = ui.image(numpy_to_base64(initial_img)).style('max-width: 800px; max-height: 800px;')
+    with ui.column().classes('gap-6 p-4').style('min-width: 400px;'):
+        ui.button("Spiralize", on_click=lambda: generate_spiral())
+        with ui.row().classes('items-center gap-2 mb-2 w-full'):
+            ui.label("Scale").classes('w-16')
+            scale_slider = ui.slider(min=1, max=10, value=3).props('label-always').classes('flex-1')
+        with ui.row().classes('items-center gap-2 mb-2 w-full'):
+            ui.label("a").classes('w-16')
+            a_slider = ui.slider(min=0, max=40, value=5).props('label-always').classes('flex-1')
+        with ui.row().classes('items-center gap-2 mb-2 w-full'):
+            ui.label("b").classes('w-16')
+            b_slider = ui.slider(min=0, max=40, value=7).props('label-always').classes('flex-1')
+        with ui.row().classes('items-center gap-2 mb-2 w-full'):
+            ui.label("x-range").classes('w-16')
+            xrange_slider = ui.range(min=-100, max=100, value={"min": -30, "max": 30}).props('label-always').classes('flex-1')
+        with ui.row().classes('items-center gap-2 mb-2 w-full'):
+            ui.label("y-range").classes('w-16')
+            yrange_slider = ui.range(min=-100, max=100, value={"min": -30, "max": 30}).props('label-always').classes('flex-1')
+        with ui.row().classes('items-center gap-2 mb-2 w-full'):
+            ui.label("Function").classes('w-16')
+            function_select = ui.select(list(FUNCS.keys()), value="Log")
 
-with ui.row().classes('w-full items-center'):
-    initial_img = np.zeros((200,200,3), dtype=float)
-    spiral_img = ui.image(numpy_to_base64(initial_img)).style('max-width: 600px; max-height: 600px;')
-    # with ui.upload(on_upload=handle_upload_tile, auto_upload=True, label="Load Tile").props('flat accept="image/*"').classes('flex-1') as upload:
-    #     ui.button('Load Tile', icon='upload', on_click=lambda: upload.run_method('pickFiles'))
-    ui.upload(on_upload=handle_upload_tile, auto_upload=True, label="Load Tile").props('flat accept="image/*"').classes('flex-1')
+        ui.upload(on_upload=handle_upload_tile, auto_upload=True, label="Load Tile").props('flat accept="image/*"').classes('flex-1')
+        ui.button("Save", on_click=save_image)
 
-with ui.row().classes('w-full gap-4 p-4'):
-    ui.button("Save", on_click=save_image)
+#with ui.row().classes('items-center w-full gap-4 p-4'):
+
+
+
+# with ui.row().classes('w-full gap-4 p-4'):
+#     ui.button("Spiralize", on_click=lambda: generate_spiral())
+#     ui.label("Scale")
+#     scale_slider = ui.slider(min=1, max=10, value=3).props('label-always').classes('flex-1')
+#     ui.label("a")    
+#     a_slider = ui.slider(min=0, max=40, value=5).props('label-always').classes('flex-1')
+#     ui.label("b")
+#     b_slider = ui.slider(min=0, max=40, value=7).props('label-always').classes('flex-1')
+
+# with ui.row().classes('w-full gap-4 p-4'):
+#     ui.label("x-range")
+#     xrange_slider = ui.range(min=-100, max=100, value={"min": -30, "max": 30}).props('label-always').classes('flex-1')
+#     ui.label("y-range")
+#     yrange_slider = ui.range(min=-100, max=100, value={"min": -30, "max": 30}).props('label-always').classes('flex-1')
+#     ui.label("Function")
+#     function_select = ui.select(list(FUNCS.keys()), value="Log")
+
+
+# with ui.row().classes('w-full items-center'):
+#     initial_img = np.zeros((200,200,3), dtype=float)
+#     spiral_img = ui.image(numpy_to_base64(initial_img)).style('max-width: 600px; max-height: 600px;')
+#     ui.upload(on_upload=handle_upload_tile, auto_upload=True, label="Load Tile").props('flat accept="image/*"').classes('flex-1')
+
+# with ui.row().classes('w-full gap-4 p-4'):
+#     ui.button("Save", on_click=save_image)
 
 
 ui.run(
